@@ -101,6 +101,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
                 LoginActivity.this.startActivity(myIntent);
+                finish();
             }
             @Override
             public void onCancel() {
@@ -122,8 +123,8 @@ public class LoginActivity extends AppCompatActivity {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed in
-                    Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
-                    LoginActivity.this.startActivity(myIntent);
+                    //Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
+                    //LoginActivity.this.startActivity(myIntent);
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                 } else {
                     // User is signed out

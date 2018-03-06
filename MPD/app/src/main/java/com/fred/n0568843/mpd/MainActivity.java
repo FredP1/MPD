@@ -78,6 +78,9 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_sign_out){
             LoginManager.getInstance().logOut();
             System.out.println(AccessToken.getCurrentAccessToken());
+            Intent myIntent = new Intent(MainActivity.this, LoginActivity.class);
+            MainActivity.this.startActivity(myIntent);
+            finish();
         }
 
         return super.onOptionsItemSelected(item);
