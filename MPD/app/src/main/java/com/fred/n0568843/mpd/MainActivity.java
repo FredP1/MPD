@@ -1,5 +1,7 @@
 package com.fred.n0568843.mpd;
 
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -16,6 +18,8 @@ import android.view.MenuItem;
 
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -77,6 +81,7 @@ public class MainActivity extends AppCompatActivity
         }
         if (id == R.id.action_sign_out){
             LoginManager.getInstance().logOut();
+            FirebaseAuth.getInstance().signOut();
             System.out.println(AccessToken.getCurrentAccessToken());
             Intent myIntent = new Intent(MainActivity.this, LoginActivity.class);
             MainActivity.this.startActivity(myIntent);
@@ -93,7 +98,11 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_modules) {
-            // Handle the camera action
+            Fragment moduleFragment = new ModuleFragment();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, moduleFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
         } else if (id == R.id.nav_deadlines) {
 
         } else if (id == R.id.nav_revision) {

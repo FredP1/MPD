@@ -94,10 +94,10 @@ public class LoginActivity extends AppCompatActivity {
             public void onSuccess(LoginResult loginResult) {
                 setFacebookData(loginResult);
                 handleFacebookAccessToken(loginResult.getAccessToken());
-                DatabaseReference myRef = FirebaseDatabase.getInstance().getReference();
-                FirebaseUser user;
-                user = mAuth.getCurrentUser();
-                myRef.child("Users").child(user.getUid()).setValue(currentUser);
+//                DatabaseReference myRef = FirebaseDatabase.getInstance().getReference();
+//                FirebaseUser user;
+//                user = mAuth.getCurrentUser();
+//                myRef.child("Users").child(user.getUid()).setValue(currentUser);
 
                 Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
                 LoginActivity.this.startActivity(myIntent);
@@ -219,6 +219,16 @@ public class LoginActivity extends AppCompatActivity {
         super.onStop();
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
+            mAuth.signOut();
+        }
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LoginManager.getInstance().logOut();
+        if (mAuthListener != null){
+            mAuth.removeAuthStateListener(mAuthListener);
+            mAuth.signOut();
         }
     }
     @Override
