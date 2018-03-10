@@ -2,6 +2,7 @@ package com.fred.n0568843.mpd;
 
 import android.net.Uri;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentContainer;
 import android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -27,7 +29,9 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         ModuleFragment.OnFragmentInteractionListener,
         NotesFragment.OnFragmentInteractionListener,
-        RevisionFragment.OnFragmentInteractionListener {
+        RevisionFragment.OnFragmentInteractionListener,
+        DeadlinesFragment.OnFragmentInteractionListener {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,17 +39,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                //.setAction("Action", null).show();
-                Toast.makeText(MainActivity.this, "This button will add a note", Toast.LENGTH_SHORT).show();
-            }
-        });
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -55,25 +48,28 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        setTitle("FNote Home");
         //Default to Notes Fragment
         Fragment notesFragment = new NotesFragment();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, notesFragment);
-        transaction.addToBackStack(null);
         transaction.commit();
         navigationView.setCheckedItem(R.id.nav_notes);
-        setTitle("All Notes");
     }
 
     @Override
     public void onBackPressed() {
-        int count = getFragmentManager().getBackStackEntryCount();
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        android.app.Fragment currentFragment = getFragmentManager().findFragmentById(R.id.fragment_container);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
+        }
+        else {
+            Fragment notesFragment = new NotesFragment();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, notesFragment, "NOTES");
+            transaction.commit();
+            //super.onBackPressed();
         }
     }
 
@@ -104,6 +100,9 @@ public class MainActivity extends AppCompatActivity
             MainActivity.this.startActivity(myIntent);
             finish();
         }
+        if (id == R.id.action_exit){
+            super.onBackPressed();
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -118,30 +117,22 @@ public class MainActivity extends AppCompatActivity
             Fragment moduleFragment = new ModuleFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, moduleFragment);
-            transaction.addToBackStack(null);
             transaction.commit();
-            setTitle("Modules");
         } else if (id == R.id.nav_deadlines) {
             Fragment deadlinesFragment = new DeadlinesFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, deadlinesFragment);
-            transaction.addToBackStack(null);
             transaction.commit();
-            setTitle("Deadlines");
         } else if (id == R.id.nav_revision) {
             Fragment revisionFragment = new RevisionFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, revisionFragment);
-            transaction.addToBackStack(null);
             transaction.commit();
-            setTitle("Revision Schedule");
         } else if (id == R.id.nav_notes) {
             Fragment notesFragment = new NotesFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, notesFragment);
-            transaction.addToBackStack(null);
             transaction.commit();
-            setTitle("All Notes");
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

@@ -58,6 +58,7 @@ public class ModuleFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        getActivity().setTitle("Modules");
     }
 
     @Override
@@ -104,5 +105,11 @@ public class ModuleFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    @Override
+    public void onResume() {
+        getActivity().setTitle("Modules");
+        super.onResume();
     }
 }

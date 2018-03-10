@@ -58,6 +58,7 @@ public class NotesFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        getActivity().setTitle("All Notes");
 
     }
 
@@ -105,5 +106,10 @@ public class NotesFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+    @Override
+    public void onResume() {
+        getActivity().setTitle("All Notes");
+        super.onResume();
     }
 }
