@@ -1,5 +1,6 @@
 package com.fred.n0568843.mpd;
 
+import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
@@ -15,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
@@ -22,7 +24,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+        ModuleFragment.OnFragmentInteractionListener,
+        NotesFragment.OnFragmentInteractionListener,
+        RevisionFragment.OnFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +40,9 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                //.setAction("Action", null).show();
+                Toast.makeText(MainActivity.this, "This button will add a note", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -48,10 +54,21 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        //Default to Notes Fragment
+        Fragment notesFragment = new NotesFragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, notesFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+        navigationView.setCheckedItem(R.id.nav_notes);
+        setTitle("All Notes");
     }
 
     @Override
     public void onBackPressed() {
+        int count = getFragmentManager().getBackStackEntryCount();
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
@@ -79,7 +96,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_settings) {
             return true;
         }
-        if (id == R.id.action_sign_out){
+        if (id == R.id.action_sign_out) {
             LoginManager.getInstance().logOut();
             FirebaseAuth.getInstance().signOut();
             System.out.println(AccessToken.getCurrentAccessToken());
@@ -103,20 +120,37 @@ public class MainActivity extends AppCompatActivity
             transaction.replace(R.id.fragment_container, moduleFragment);
             transaction.addToBackStack(null);
             transaction.commit();
+            setTitle("Modules");
         } else if (id == R.id.nav_deadlines) {
-
+            Fragment deadlinesFragment = new DeadlinesFragment();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, deadlinesFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+            setTitle("Deadlines");
         } else if (id == R.id.nav_revision) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+            Fragment revisionFragment = new RevisionFragment();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, revisionFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+            setTitle("Revision Schedule");
+        } else if (id == R.id.nav_notes) {
+            Fragment notesFragment = new NotesFragment();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, notesFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+            setTitle("All Notes");
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 }

@@ -2,18 +2,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.fred.n0568843.mpd.ModuleFragment"
+    tools:context="com.fred.n0568843.mpd.RevisionFragment"
     android:orientation="vertical">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+
+    <CalendarView
+        android:id="@+id/revisionCalendar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Fragment Module" />
+        android:layout_height="wrap_content" />
 
     <ListView
-        android:id="@+id/moduleListView"
-        android:layout_width="match_parent"
+        android:id="@+id/revisionListView"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent" />
-
 </LinearLayout>
