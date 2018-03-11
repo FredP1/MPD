@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 
 /**
@@ -66,7 +67,16 @@ public class DeadlinesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_deadlines, container, false);
+        View view = inflater.inflate(R.layout.fragment_deadlines, container,false);
+        //Add Floating action button action
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                Toast.makeText(getActivity(), "Add Deadline button", Toast.LENGTH_SHORT).show();
+            }
+        });
+        return view;
     }
 
 //    // TODO: Rename method, update argument and hook method into UI event
