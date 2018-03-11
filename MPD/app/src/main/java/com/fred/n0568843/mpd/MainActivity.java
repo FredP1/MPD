@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity
         RevisionFragment.OnFragmentInteractionListener,
         DeadlinesFragment.OnFragmentInteractionListener {
 
+    GoogleSignInClient mGoogleSignInClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +58,6 @@ public class MainActivity extends AppCompatActivity
         transaction.commit();
         navigationView.setCheckedItem(R.id.nav_notes);
     }
-
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

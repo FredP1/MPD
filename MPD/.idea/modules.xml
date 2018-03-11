@@ -4,7 +4,9 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MPD.iml" filepath="$PROJECT_DIR$/MPD.iml" />
       <module fileurl="file://C:\Users\Fred\Documents\GitHub\MPD\MPD\MPD.iml" filepath="C:\Users\Fred\Documents\GitHub\MPD\MPD\MPD.iml" />
+      <module fileurl="file://C:\Users\Patricia\Documents\GitHub\MPD\MPD\MPD.iml" filepath="C:\Users\Patricia\Documents\GitHub\MPD\MPD\MPD.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://C:\Users\Patricia\Documents\GitHub\MPD\MPD\app\app.iml" filepath="C:\Users\Patricia\Documents\GitHub\MPD\MPD\app\app.iml" />
       <module fileurl="file://C:\Users\Fred\Documents\GitHub\MPD\MPD\app\app.iml" filepath="C:\Users\Fred\Documents\GitHub\MPD\MPD\app\app.iml" />
     </modules>
   </component>
