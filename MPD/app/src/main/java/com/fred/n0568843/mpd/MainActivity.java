@@ -18,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity
         DeadlinesFragment.OnFragmentInteractionListener {
 
     GoogleSignInClient mGoogleSignInClient;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +59,13 @@ public class MainActivity extends AppCompatActivity
         transaction.replace(R.id.fragment_container, notesFragment);
         transaction.commit();
         navigationView.setCheckedItem(R.id.nav_notes);
+
+        //Sets username for navigation view
+        View headerView = navigationView.getHeaderView(0);
+        TextView navName = headerView.findViewById(R.id.navName);
+        mAuth = FirebaseAuth.getInstance();
+        String user = mAuth.getCurrentUser().getDisplayName();
+        navName.setText(user);
     }
     @Override
     public void onBackPressed() {

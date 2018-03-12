@@ -120,6 +120,7 @@ public class LoginActivity extends AppCompatActivity {
         //Facebook
         LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.setReadPermissions(Arrays.asList("public_profile", EMAIL));
+        //loginButton.setVisibility(View.GONE);
 
         // If you are using in a fragment, call loginButton.setFragment(this);
 
@@ -129,10 +130,6 @@ public class LoginActivity extends AppCompatActivity {
             public void onSuccess(LoginResult loginResult) {
                 //setFacebookData(loginResult);
                 handleFacebookAccessToken(loginResult.getAccessToken());
-//                DatabaseReference myRef = FirebaseDatabase.getInstance().getReference();
-//                FirebaseUser user;
-//                user = mAuth.getCurrentUser();
-//                myRef.child("Users").child(user.getUid()).setValue(currentUser);
 
             }
 
@@ -161,7 +158,17 @@ public class LoginActivity extends AppCompatActivity {
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                     DatabaseReference myRef = FirebaseDatabase.getInstance().getReference();
                     user = mAuth.getCurrentUser();
-                    myRef.child("123").setValue("hello mate");
+                    //Adds UID to database
+                    myRef.child("UserID").child(mAuth.getUid()).setValue(user.getDisplayName());
+                    //Adds Modules to database
+                    myRef.child("UserID").child(mAuth.getUid()).child("Modules").setValue("TestModule");
+                    //Adds test notes to database
+                    myRef.child("UserID").child(mAuth.getUid()).child("Modules").child("Note 1").setValue("Lorem Ipsum is simply dummy text of the printing and typesetting industry.");
+                    //Adds test Deadlines to database
+                    myRef.child("UserID").child(mAuth.getUid()).child("Deadlines").child("Deadlines 1").setValue("MPD Is due 23rd");
+                    Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
+                    LoginActivity.this.startActivity(myIntent);
+                    finish();
                 } else {
                     // User is signed out
                     System.out.println("User has signed out");
@@ -184,9 +191,6 @@ public class LoginActivity extends AppCompatActivity {
                             //Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             //updateUI(user);
-                            Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
-                            LoginActivity.this.startActivity(myIntent);
-                            finish();
                         } else {
                             // If sign in fails, display a message to the user.
                             //Log.w(TAG, "signInWithCredential:failure", task.getException());
