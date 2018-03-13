@@ -67,8 +67,11 @@ import java.util.List;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -156,16 +159,28 @@ public class LoginActivity extends AppCompatActivity {
                     //Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
                     //LoginActivity.this.startActivity(myIntent);
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-                    DatabaseReference myRef = FirebaseDatabase.getInstance().getReference();
+                    final DatabaseReference myRef = FirebaseDatabase.getInstance().getReference();
                     user = mAuth.getCurrentUser();
                     //Adds UID to database
-                    myRef.child("UserID").child(mAuth.getUid()).setValue(user.getDisplayName());
-                    //Adds Modules to database
-                    myRef.child("UserID").child(mAuth.getUid()).child("Modules").setValue("TestModule");
-                    //Adds test notes to database
-                    myRef.child("UserID").child(mAuth.getUid()).child("Modules").child("Note 1").setValue("Lorem Ipsum is simply dummy text of the printing and typesetting industry.");
-                    //Adds test Deadlines to database
-                    myRef.child("UserID").child(mAuth.getUid()).child("Deadlines").child("Deadlines 1").setValue("MPD Is due 23rd");
+                    final DatabaseReference dref;
+                    dref = FirebaseDatabase.getInstance().getReference("UserID/");
+                    dref.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot snapshot) {
+                            if (!snapshot.hasChild(mAuth.getUid())) {
+                                myRef.child("UserID").child(mAuth.getUid()).setValue(mAuth.getCurrentUser().getDisplayName());
+                                //Adds test modules to database
+                                myRef.child("UserID").child(mAuth.getUid()).child("Modules").child("Test Module").setValue("Lorem Ipsum is simply dummy text of the printing and typesetting industry.");
+                                //Adds test Deadlines to database
+                                myRef.child("UserID").child(mAuth.getUid()).child("Deadlines").child("Test Deadline").setValue("MPD Is due 23rd");
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
                     Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
                     LoginActivity.this.startActivity(myIntent);
                     finish();
@@ -218,8 +233,8 @@ public class LoginActivity extends AppCompatActivity {
     public void onStop() {
         super.onStop();
         if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
-            mAuth.signOut();
+            //mAuth.removeAuthStateListener(mAuthListener);
+            //mAuth.signOut();
         }
     }
 
@@ -228,8 +243,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onDestroy();
         LoginManager.getInstance().logOut();
         if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
-            mAuth.signOut();
+            //mAuth.removeAuthStateListener(mAuthListener);
+            //mAuth.signOut();
         }
     }
 

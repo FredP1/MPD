@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +48,7 @@ public class ModuleFragment extends Fragment {
     ArrayList<String> list = new ArrayList<>();
     ArrayAdapter<String> adapter;
     private FirebaseAuth mAuth;
+    int counter = 1;
 
     public ModuleFragment() {
         // Required empty public constructor
@@ -91,13 +93,14 @@ public class ModuleFragment extends Fragment {
         FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
         ListView moduleListView = (ListView) view.findViewById(R.id.moduleListView);
         adapter=new ArrayAdapter<String>(getActivity(),android.R.layout.simple_dropdown_item_1line,list);
-        //moduleListView.setAdapter(adapter);
-        dref = FirebaseDatabase.getInstance().getReference();
-        dref.orderByChild("UserID/Modules/Note 1");
+        moduleListView.setAdapter(adapter);
+        dref = FirebaseDatabase.getInstance().getReference("UserID/"+mAuth.getUid()+"/Modules");
+        Log.d("Hello mate" , mAuth.getUid());
         dref.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                String value = dataSnapshot.getValue(String.class);
+                String value = dataSnapshot.getKey().toString();
+                Log.d("Dave", value);
                 list.add(value);
                 adapter.notifyDataSetChanged();
             }
@@ -126,6 +129,8 @@ public class ModuleFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
+                dref.child("Added Module "+counter).setValue("Module added");
+                counter++;
                 Toast.makeText(getActivity(), "Add Module Button", Toast.LENGTH_SHORT).show();
             }
         });
