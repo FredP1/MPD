@@ -93,12 +93,13 @@ public class ModuleFragment extends Fragment {
         adapter=new ArrayAdapter<String>(getActivity(),android.R.layout.simple_dropdown_item_1line,list);
         //moduleListView.setAdapter(adapter);
         dref = FirebaseDatabase.getInstance().getReference();
+        dref.orderByChild("UserID/Modules/Note 1");
         dref.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-//                String value = dataSnapshot.getValue(String.class);
-//                list.add(value);
-//                adapter.notifyDataSetChanged();
+                String value = dataSnapshot.getValue(String.class);
+                list.add(value);
+                adapter.notifyDataSetChanged();
             }
 
             @Override
