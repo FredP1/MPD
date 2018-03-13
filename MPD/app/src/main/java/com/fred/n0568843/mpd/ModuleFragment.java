@@ -13,6 +13,7 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -45,6 +46,7 @@ public class ModuleFragment extends Fragment {
     DatabaseReference dref;
     ArrayList<String> list = new ArrayList<>();
     ArrayAdapter<String> adapter;
+    private FirebaseAuth mAuth;
 
     public ModuleFragment() {
         // Required empty public constructor
@@ -83,17 +85,20 @@ public class ModuleFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_module, container,false);
+
+        mAuth = FirebaseAuth.getInstance();
+
         FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
         ListView moduleListView = (ListView) view.findViewById(R.id.moduleListView);
         adapter=new ArrayAdapter<String>(getActivity(),android.R.layout.simple_dropdown_item_1line,list);
-        moduleListView.setAdapter(adapter);
+        //moduleListView.setAdapter(adapter);
         dref = FirebaseDatabase.getInstance().getReference();
         dref.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                String value = dataSnapshot.getValue(String.class);
-                list.add(value);
-                adapter.notifyDataSetChanged();
+//                String value = dataSnapshot.getValue(String.class);
+//                list.add(value);
+//                adapter.notifyDataSetChanged();
             }
 
             @Override

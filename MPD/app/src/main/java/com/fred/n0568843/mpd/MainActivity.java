@@ -1,5 +1,7 @@
 package com.fred.n0568843.mpd;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentContainer;
@@ -18,6 +20,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +29,9 @@ import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.squareup.picasso.Picasso;
+
+import java.io.InputStream;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -60,12 +66,15 @@ public class MainActivity extends AppCompatActivity
         transaction.commit();
         navigationView.setCheckedItem(R.id.nav_notes);
 
-        //Sets username for navigation view
+        //Sets username and pic for navigation view
         View headerView = navigationView.getHeaderView(0);
         TextView navName = headerView.findViewById(R.id.navName);
+        ImageView navPic = headerView.findViewById(R.id.navPicture);
         mAuth = FirebaseAuth.getInstance();
-        String user = mAuth.getCurrentUser().getDisplayName();
-        navName.setText(user);
+        String userName = mAuth.getCurrentUser().getDisplayName();
+        navName.setText(userName);
+        //This changes the icon in navigation menu to the profile pic
+        //Picasso.with(this).load(mAuth.getCurrentUser().getPhotoUrl()).into(navPic);
     }
     @Override
     public void onBackPressed() {
