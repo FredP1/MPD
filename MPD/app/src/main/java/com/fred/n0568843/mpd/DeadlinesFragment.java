@@ -5,10 +5,22 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
 
 
 /**
@@ -30,6 +42,11 @@ public class DeadlinesFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    DatabaseReference dref;
+    ArrayList<String> list = new ArrayList<>();
+    ArrayAdapter<String> adapter;
+    private FirebaseAuth mAuth;
+    int counter = 0;
 
     public DeadlinesFragment() {
         // Required empty public constructor
@@ -73,7 +90,44 @@ public class DeadlinesFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
+                dref.child("Added Deadline "+counter).setValue("Deadline added");
+                counter++;
                 Toast.makeText(getActivity(), "Add Deadline button", Toast.LENGTH_SHORT).show();
+            }
+        });
+        mAuth = FirebaseAuth.getInstance();
+        ListView moduleListView = (ListView) view.findViewById(R.id.deadlinesList);
+        adapter=new ArrayAdapter<String>(getActivity(),android.R.layout.simple_dropdown_item_1line,list);
+        moduleListView.setAdapter(adapter);
+        dref = FirebaseDatabase.getInstance().getReference("UserID/"+mAuth.getUid()+"/Deadlines");
+        Log.d("Hello mate" , mAuth.getUid());
+        dref.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                String value = dataSnapshot.getKey().toString();
+                Log.d("Dave", value);
+                list.add(value);
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         });
         return view;

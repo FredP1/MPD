@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -46,6 +47,7 @@ public class ModuleFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
     DatabaseReference dref;
     ArrayList<String> list = new ArrayList<>();
+    ArrayList<String> listValues = new ArrayList<>();
     ArrayAdapter<String> adapter;
     private FirebaseAuth mAuth;
     int counter = 1;
@@ -99,9 +101,11 @@ public class ModuleFragment extends Fragment {
         dref.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                String value = dataSnapshot.getKey().toString();
-                Log.d("Dave", value);
-                list.add(value);
+                String key = dataSnapshot.getKey().toString();
+                String value = dataSnapshot.getValue().toString();
+                Log.d("Dave", key);
+                list.add(key);
+                listValues.add(value);
                 adapter.notifyDataSetChanged();
             }
 
@@ -125,11 +129,20 @@ public class ModuleFragment extends Fragment {
 
             }
         });
+        moduleListView.setClickable(true);
+        moduleListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.d("Dave", listValues.get(i));
+
+            }
+        });
+
         //Add Floating action button action
         fab.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                dref.child("Added Module "+counter).setValue("Module added");
+                dref.child("Added Module "+counter).setValue("Module added" +counter);
                 counter++;
                 Toast.makeText(getActivity(), "Add Module Button", Toast.LENGTH_SHORT).show();
             }
