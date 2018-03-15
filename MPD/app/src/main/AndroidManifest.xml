@@ -17,8 +17,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".LoginActivity"
-            android:label="FNote"
-            android:screenOrientation="portrait">
+            android:label="FNote">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -49,8 +48,9 @@
         <activity
             android:name=".MainActivity"
             android:label="FNote"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".NewNote"
+            android:label="New Note"></activity>
     </application>
 
 </manifest>

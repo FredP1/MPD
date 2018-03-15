@@ -54,27 +54,28 @@ public class MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        if (savedInstanceState == null) {
 
-        setTitle("FNote Home");
-        //Default to Notes Fragment
-        Fragment notesFragment = new NotesFragment();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, notesFragment);
-        transaction.commit();
-        navigationView.setCheckedItem(R.id.nav_notes);
+            setTitle("FNote Home");
+            //Default to Notes Fragment
+            Fragment notesFragment = new NotesFragment();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, notesFragment);
+            transaction.commit();
+            navigationView.setCheckedItem(R.id.nav_notes);
 
-        //Sets username and pic for navigation view
-        View headerView = navigationView.getHeaderView(0);
-        TextView navName = headerView.findViewById(R.id.navName);
-        ImageView navPic = headerView.findViewById(R.id.navPicture);
-        mAuth = FirebaseAuth.getInstance();
-        String userName = mAuth.getCurrentUser().getDisplayName();
-        navName.setText(userName);
-        //This changes the icon in navigation menu to the profile pic
-        //Picasso.with(this).load(mAuth.getCurrentUser().getPhotoUrl()).into(navPic);
+            //Sets username and pic for navigation view
+            View headerView = navigationView.getHeaderView(0);
+            TextView navName = headerView.findViewById(R.id.navName);
+            ImageView navPic = headerView.findViewById(R.id.navPicture);
+            mAuth = FirebaseAuth.getInstance();
+            String userName = mAuth.getCurrentUser().getDisplayName();
+            navName.setText(userName);
+            //This changes the icon in navigation menu to the profile pic
+            //Picasso.with(this).load(mAuth.getCurrentUser().getPhotoUrl()).into(navPic);
+        }
     }
     @Override
     public void onBackPressed() {

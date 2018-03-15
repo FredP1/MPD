@@ -1,5 +1,7 @@
 package com.fred.n0568843.mpd;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.content.Context;
@@ -10,7 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
@@ -102,10 +107,8 @@ public class ModuleFragment extends Fragment {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 String key = dataSnapshot.getKey().toString();
-                String value = dataSnapshot.getValue().toString();
                 Log.d("Dave", key);
                 list.add(key);
-                listValues.add(value);
                 adapter.notifyDataSetChanged();
             }
 
@@ -116,7 +119,8 @@ public class ModuleFragment extends Fragment {
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-
+                list.remove(dataSnapshot.getKey().toString());
+                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -130,24 +134,42 @@ public class ModuleFragment extends Fragment {
             }
         });
         moduleListView.setClickable(true);
+        //Open notes fragment
         moduleListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Log.d("Dave", listValues.get(i));
-
+                Log.d("Dave", list.get(i));
             }
         });
-
         //Add Floating action button action
         fab.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                dref.child("Added Module "+counter).setValue("Module added" +counter);
-                counter++;
-                Toast.makeText(getActivity(), "Add Module Button", Toast.LENGTH_SHORT).show();
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage("Enter the new modules name:")
+                        .setTitle("New Module");
+                final EditText input = new EditText(getActivity());
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT);
+                input.setLayoutParams(lp);
+                builder.setView(input);
+                builder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        addNewModule(input);
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+                //Toast.makeText(getActivity(), "Add Module Button", Toast.LENGTH_SHORT).show();
             }
         });
         return view;
+    }
+
+    private void addNewModule(EditText input) {
+        String moduleName = input.getText().toString();
+        dref.child(moduleName).setValue("1");
     }
 
     // TODO: Rename method, update argument and hook method into UI event

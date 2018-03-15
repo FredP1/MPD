@@ -1,6 +1,8 @@
 package com.fred.n0568843.mpd;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -10,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -44,6 +48,7 @@ public class DeadlinesFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
     DatabaseReference dref;
     ArrayList<String> list = new ArrayList<>();
+    ArrayList<String> subList = new ArrayList<>();
     ArrayAdapter<String> adapter;
     private FirebaseAuth mAuth;
     int counter = 0;
@@ -90,50 +95,71 @@ public class DeadlinesFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                dref.child("Added Deadline "+counter).setValue("Deadline added");
-                counter++;
-                Toast.makeText(getActivity(), "Add Deadline button", Toast.LENGTH_SHORT).show();
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage("Enter the new deadlines name:")
+                        .setTitle("New Deadline");
+                final EditText input = new EditText(getActivity());
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT);
+                input.setLayoutParams(lp);
+                builder.setView(input);
+                builder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        addNewDeadline(input);
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+                //Toast.makeText(getActivity(), "Add Module Button", Toast.LENGTH_SHORT).show();
             }
         });
         mAuth = FirebaseAuth.getInstance();
-        ListView moduleListView = (ListView) view.findViewById(R.id.deadlinesList);
-        adapter=new ArrayAdapter<String>(getActivity(),android.R.layout.simple_dropdown_item_1line,list);
-        moduleListView.setAdapter(adapter);
+        ListView deadlinesListView = (ListView) view.findViewById(R.id.deadlinesList);
+        adapter=new ArrayAdapter<String>(getActivity(),android.R.layout.simple_dropdown_item_1line, list);
+        deadlinesListView.setAdapter(adapter);
         dref = FirebaseDatabase.getInstance().getReference("UserID/"+mAuth.getUid()+"/Deadlines");
         Log.d("Hello mate" , mAuth.getUid());
         dref.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                String value = dataSnapshot.getKey().toString();
-                Log.d("Dave", value);
-                list.add(value);
+                String key = dataSnapshot.getKey().toString();
+                Log.d("Dave", key);
+                list.add(key);
                 adapter.notifyDataSetChanged();
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                adapter.notifyDataSetChanged();
 
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-
+                list.remove(dataSnapshot.getKey().toString());
+                adapter.notifyDataSetChanged();
             }
 
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
+                adapter.notifyDataSetChanged();
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                adapter.notifyDataSetChanged();
             }
         });
         return view;
     }
 
-//    // TODO: Rename method, update argument and hook method into UI event
+    private void addNewDeadline(EditText input) {
+        String deadlineName = input.getText().toString();
+        dref.child(deadlineName).setValue("23/03/2018");
+    }
+
+    //    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
