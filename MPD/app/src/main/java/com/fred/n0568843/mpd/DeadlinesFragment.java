@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -149,6 +150,40 @@ public class DeadlinesFragment extends Fragment {
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 adapter.notifyDataSetChanged();
+            }
+        });
+        deadlinesListView.setClickable(true);
+        //Open notes fragment
+        deadlinesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.d("Dave", list.get(i));
+            }
+        });
+        //Open options menu
+        deadlinesListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, final int i, long l) {
+                CharSequence options[] = new CharSequence[] {"Edit "+list.get(i)+" Name", "Delete "+list.get(i)+" Deadline"};
+
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Choose an option");
+                builder.setItems(options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // the user clicked on colors[which]
+                        if (which == 0) //Edit name
+                        {
+
+                        }
+                        if (which == 1) //Delete Deadline
+                        {
+                            dref.child(list.get(i)).removeValue();
+                        }
+                    }
+                });
+                builder.show();
+                return false;
             }
         });
         return view;

@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -29,6 +30,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 
 /**
@@ -52,7 +54,6 @@ public class ModuleFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
     DatabaseReference dref;
     ArrayList<String> list = new ArrayList<>();
-    ArrayList<String> listValues = new ArrayList<>();
     ArrayAdapter<String> adapter;
     private FirebaseAuth mAuth;
     int counter = 1;
@@ -98,8 +99,8 @@ public class ModuleFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
 
         FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-        ListView moduleListView = (ListView) view.findViewById(R.id.moduleListView);
-        adapter=new ArrayAdapter<String>(getActivity(),android.R.layout.simple_dropdown_item_1line,list);
+        ListView moduleListView = view.findViewById(R.id.moduleListView);
+        adapter=new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, list);
         moduleListView.setAdapter(adapter);
         dref = FirebaseDatabase.getInstance().getReference("UserID/"+mAuth.getUid()+"/Modules");
         Log.d("Hello mate" , mAuth.getUid());
@@ -139,6 +140,32 @@ public class ModuleFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Log.d("Dave", list.get(i));
+            }
+        });
+        //Open options menu
+        moduleListView.setOnItemLongClickListener(new OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, final int i, long l) {
+                CharSequence options[] = new CharSequence[] {"Edit "+list.get(i)+" Name", "Delete "+list.get(i)+" Module"};
+
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Choose an option");
+                builder.setItems(options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // the user clicked on colors[which]
+                        if (which == 0) //Edit name
+                        {
+
+                        }
+                        if (which == 1) //Delete module
+                        {
+                            dref.child(list.get(i)).removeValue();
+                        }
+                    }
+                });
+                builder.show();
+                return false;
             }
         });
         //Add Floating action button action
