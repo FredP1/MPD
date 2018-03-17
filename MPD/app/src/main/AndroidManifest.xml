@@ -49,8 +49,10 @@
             android:name=".MainActivity"
             android:label="FNote"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".NewNote"
-            android:label="New Note"></activity>
+        <activity
+            android:name=".NewNote"
+            android:label="New Note" />
+        <activity android:name=".ModuleNotes"></activity>
     </application>
 
 </manifest>

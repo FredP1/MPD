@@ -2,6 +2,7 @@ package com.fred.n0568843.mpd;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.content.Context;
@@ -140,6 +141,9 @@ public class ModuleFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Log.d("Dave", list.get(i));
+                Intent myIntent = new Intent(getActivity(), ModuleNotes.class);
+                myIntent.putExtra("MODULE_NAME", list.get(i));
+                startActivity(myIntent);
             }
         });
         //Open options menu

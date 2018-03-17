@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity
 
     GoogleSignInClient mGoogleSignInClient;
     private FirebaseAuth mAuth;
+    NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +55,7 @@ public class MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         if (savedInstanceState == null) {
 
@@ -85,6 +86,8 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         }
         else {
+            setTitle("All Notes");
+            navigationView.setCheckedItem(R.id.nav_notes);
             Fragment notesFragment = new NotesFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, notesFragment, "NOTES");

@@ -1,13 +1,16 @@
 package com.fred.n0568843.mpd;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -27,6 +30,7 @@ public class NewNote extends AppCompatActivity {
     private FirebaseAuth mAuth;
 
     ArrayList<String> moduleList = new ArrayList<>();
+    ArrayList<String> noteList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +50,10 @@ public class NewNote extends AppCompatActivity {
                 String key = dataSnapshot.getKey().toString();
                 moduleList.add(key);
                 adapter.notifyDataSetChanged();
+                //populates notes list
+                for (DataSnapshot uniqueNote : dataSnapshot.getChildren()){
+                    noteList.add(uniqueNote.getKey());
+                }
             }
 
             @Override
@@ -84,7 +92,22 @@ public class NewNote extends AppCompatActivity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                drefModule.child(noteTitle.getText().toString()).setValue(noteContents.getText().toString());
+                System.out.println(noteTitle.getText().toString());
+                if (noteTitle.getText().toString().matches(""))
+                {
+                    Toast.makeText(NewNote.this, "Please enter a title", Toast.LENGTH_SHORT).show();
+                }
+                else if (noteList.contains(noteTitle.getText().toString()))
+                {
+                    Toast.makeText(NewNote.this, "Note with that title already exists", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    drefModule.child(noteTitle.getText().toString()).setValue(noteContents.getText().toString());
+                    Intent myIntent = new Intent(NewNote.this, MainActivity.class);
+                    NewNote.this.startActivity(myIntent);
+                    finish();
+                }
+
             }
         });
 

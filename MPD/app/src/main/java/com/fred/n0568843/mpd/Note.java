@@ -11,5 +11,4 @@ public class Note {
     String title;
     String noteContents;
     Date noteCreated;
-    Date lastRevised;
 }

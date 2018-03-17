@@ -6,10 +6,22 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
 
 
 /**
@@ -29,6 +41,10 @@ public class NotesFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    DatabaseReference dref;
+    ArrayList<String> list = new ArrayList<>();
+    ArrayAdapter<String> adapter;
+    private FirebaseAuth mAuth;
 
     private OnFragmentInteractionListener mListener;
 
@@ -69,21 +85,58 @@ public class NotesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_notes, container,false);
+        View view = inflater.inflate(R.layout.fragment_notes, container, false);
         //Add Floating action button action
         FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener(){
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view){
+            public void onClick(View view) {
                 Intent myIntent = new Intent(getActivity(), NewNote.class);
                 getActivity().startActivity(myIntent);
                 //Toast.makeText(getActivity(), "Add Note button", Toast.LENGTH_SHORT).show();
             }
         });
+        mAuth = FirebaseAuth.getInstance();
+        ListView moduleListView = view.findViewById(R.id.notesListView);
+        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, list);
+        moduleListView.setAdapter(adapter);
+        dref = FirebaseDatabase.getInstance().getReference("UserID/" + mAuth.getUid() + "/Modules");
+        Log.d("Hello mate", mAuth.getUid());
+        dref.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                for (DataSnapshot uniqueNote : dataSnapshot.getChildren()){
+                    list.add(uniqueNote.getKey());
+                    adapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                list.remove(dataSnapshot.getKey().toString());
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         return view;
     }
 //
-    // TODO: Rename method, update argument and hook method into UI event
+                // TODO: Rename method, update argument and hook method into UI event
+
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -121,6 +174,7 @@ public class NotesFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
     @Override
     public void onResume() {
         getActivity().setTitle("All Notes");
