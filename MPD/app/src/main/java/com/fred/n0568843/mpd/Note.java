@@ -12,6 +12,10 @@ public class Note {
     String noteContents;
     Date noteCreated;
 
+    public Note()
+    {
+    }
+
     public Note(String m, String t, String note, Date f)
     {
         module = m;

@@ -1,6 +1,8 @@
 package com.fred.n0568843.mpd;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -44,6 +47,7 @@ public class NotesFragment extends Fragment {
     DatabaseReference dref;
     ArrayList<String> list = new ArrayList<>();
     ArrayAdapter<String> adapter;
+    ArrayList<Note> noteList = new ArrayList<>();
     private FirebaseAuth mAuth;
 
     private OnFragmentInteractionListener mListener;
@@ -97,9 +101,9 @@ public class NotesFragment extends Fragment {
             }
         });
         mAuth = FirebaseAuth.getInstance();
-        ListView moduleListView = view.findViewById(R.id.notesListView);
+        ListView notesListView = view.findViewById(R.id.notesListView);
         adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, list);
-        moduleListView.setAdapter(adapter);
+        notesListView.setAdapter(adapter);
         dref = FirebaseDatabase.getInstance().getReference("UserID/" + mAuth.getUid() + "/Modules");
         Log.d("Hello mate", mAuth.getUid());
         dref.addChildEventListener(new ChildEventListener() {
@@ -108,6 +112,8 @@ public class NotesFragment extends Fragment {
                 for (DataSnapshot uniqueNote : dataSnapshot.getChildren()){
                     list.add(uniqueNote.getKey());
                     adapter.notifyDataSetChanged();
+                    Note note = uniqueNote.getValue(Note.class);
+                    noteList.add(note);
                 }
             }
 
@@ -118,8 +124,16 @@ public class NotesFragment extends Fragment {
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                list.remove(dataSnapshot.getKey().toString());
-                adapter.notifyDataSetChanged();
+                for (DataSnapshot uniqueNote : dataSnapshot.getChildren()) {
+                    list.remove(uniqueNote.toString());
+                    adapter.notifyDataSetChanged();
+                    String module = dataSnapshot.getKey();
+                    //this doesnt work, fix it
+                    if (uniqueNote.getChildrenCount() == 0)
+                    {
+                        dref.child(module).setValue(1);
+                    }
+                }
             }
 
             @Override
@@ -132,6 +146,42 @@ public class NotesFragment extends Fragment {
 
             }
         });
+        notesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.d("Dave", list.get(i));;
+                Intent myIntent = new Intent(getActivity(), NewNote.class);
+                myIntent.putExtra("NoteTitle", noteList.get(i).title);
+                myIntent.putExtra("NoteContents", noteList.get(i).noteContents);
+                startActivity(myIntent);
+            }
+        });
+        notesListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, final int i, long l) {
+                CharSequence options[] = new CharSequence[] {"Edit "+list.get(i)+" Name", "Delete "+list.get(i)+" Note"};
+
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Choose an option");
+                builder.setItems(options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // the user clicked on colors[which]
+                        if (which == 0) //Edit name
+                        {
+
+                        }
+                        if (which == 1) //Delete module
+                        {
+                            dref.child(noteList.get(i).module).child(list.get(i)).removeValue();
+                        }
+                    }
+                });
+                builder.show();
+                return true;
+            }
+        });
+
         return view;
     }
 //

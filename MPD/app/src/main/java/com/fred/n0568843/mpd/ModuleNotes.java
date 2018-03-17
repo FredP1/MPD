@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -24,6 +25,7 @@ public class ModuleNotes extends AppCompatActivity {
     ArrayList<String> list = new ArrayList<>();
     ArrayAdapter<String> adapter;
     private FirebaseAuth mAuth;
+    ArrayList<Note> noteList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +58,8 @@ public class ModuleNotes extends AppCompatActivity {
                 Log.d("ModuleNotes", key);
                 list.add(key);
                 adapter.notifyDataSetChanged();
+                Note note = dataSnapshot.getValue(Note.class);
+                noteList.add(note);
             }
 
             @Override
@@ -78,5 +82,16 @@ public class ModuleNotes extends AppCompatActivity {
 
             }
         });
+        moduleListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.d("Dave", list.get(i));;
+                Intent myIntent = new Intent(ModuleNotes.this, NewNote.class);
+                myIntent.putExtra("NoteTitle", noteList.get(i).title);
+                myIntent.putExtra("NoteContents", noteList.get(i).noteContents);
+                startActivity(myIntent);
+            }
+        });
     }
+
 }

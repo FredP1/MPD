@@ -41,6 +41,17 @@ public class NewNote extends AppCompatActivity {
         noteTitle = findViewById(R.id.noteTitle);
         noteContents = findViewById(R.id.noteTextBox);
 
+        try {
+            String previousTitle = getIntent().getStringExtra("NoteTitle");
+            String previousContent = getIntent().getStringExtra("NoteContents");
+            noteTitle.setText(previousTitle);
+            noteContents.setText(previousContent);
+        }
+        catch (Exception e)
+        {
+            Log.d("New Note", "No extra variables");
+        }
+
         mAuth = FirebaseAuth.getInstance();
         dref = FirebaseDatabase.getInstance().getReference("UserID/" + mAuth.getUid() + "/Modules");
         Spinner moduleSpinner = findViewById(R.id.moduleSpinner);
@@ -87,7 +98,7 @@ public class NewNote extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-
+                chosenModule = "Untitled Module";
             }
         });
         Button saveButton = findViewById(R.id.saveButton);
