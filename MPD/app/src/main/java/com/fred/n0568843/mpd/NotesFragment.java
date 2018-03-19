@@ -119,21 +119,22 @@ public class NotesFragment extends Fragment {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
+                adapter.notifyDataSetChanged();
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 for (DataSnapshot uniqueNote : dataSnapshot.getChildren()) {
                     list.remove(uniqueNote.toString());
-                    adapter.notifyDataSetChanged();
-                    String module = dataSnapshot.getKey();
                     //this doesnt work, fix it
-                    if (uniqueNote.getChildrenCount() == 0)
-                    {
-                        dref.child(module).setValue(1);
-                    }
+                    long dave = uniqueNote.getChildrenCount();
                 }
+                String module = dataSnapshot.getKey();
+                if (dataSnapshot.getValue() == null)
+                {
+                    dref.child(module).setValue(1);
+                }
+                adapter.notifyDataSetChanged();
             }
 
             @Override

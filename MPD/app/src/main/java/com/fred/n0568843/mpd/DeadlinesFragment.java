@@ -1,6 +1,8 @@
 package com.fred.n0568843.mpd;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
@@ -13,9 +15,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,7 +31,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
 
 
 /**
@@ -49,8 +58,10 @@ public class DeadlinesFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
     DatabaseReference dref;
     ArrayList<String> list = new ArrayList<>();
-    ArrayList<String> subList = new ArrayList<>();
+    ArrayList<String> listValues = new ArrayList<>();
+    ArrayList<Deadline> deadlineList = new ArrayList<>();
     ArrayAdapter<String> adapter;
+    Calendar myCalendar;
     private FirebaseAuth mAuth;
     int counter = 0;
 
@@ -93,21 +104,52 @@ public class DeadlinesFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_deadlines, container,false);
         //Add Floating action button action
         FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+        //Table stuff
+        final TableLayout tableLayout = view.findViewById(R.id.deadlinesTableLayout);
+        //Table stuff end
+        myCalendar = Calendar.getInstance();
         fab.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setMessage("Enter the new deadlines name:")
-                        .setTitle("New Deadline");
-                final EditText input = new EditText(getActivity());
-                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.MATCH_PARENT);
-                input.setLayoutParams(lp);
-                builder.setView(input);
+                builder.setTitle("New Deadline");
+                final EditText deadlineName = new EditText(getActivity());
+                final Button deadlineDate = new Button(getActivity());
+                final Button deadlineTime = new Button(getActivity());
+                final EditText deadlineModule = new EditText(getActivity());
+                deadlineName.setHint("Enter Deadline Name");
+                deadlineDate.setHint("Choose Deadline Date");
+                deadlineDate.setFocusable(false);
+                deadlineTime.setHint("Choose Deadline Time");
+                deadlineTime.setFocusable(false);
+                LinearLayout lp = new LinearLayout(getActivity());
+                lp.setOrientation(LinearLayout.VERTICAL);
+                lp.addView(deadlineName);
+                lp.addView(deadlineDate);
+                lp.addView(deadlineTime);
+                builder.setView(lp);
                 builder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        addNewDeadline(input);
+                        addNewDeadline(deadlineName, deadlineDate, deadlineTime, deadlineModule);
+                    }
+                });
+                final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        myCalendar.set(Calendar.YEAR, year);
+                        myCalendar.set(Calendar.MONTH, monthOfYear);
+                        myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                        String myFormat = "dd-MM-yy";
+                        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.UK);
+                        deadlineDate.setText(sdf.format(myCalendar.getTime()));
+
+                    }
+                };
+                deadlineDate.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        new DatePickerDialog(getActivity(), date, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                                myCalendar.get(Calendar.DAY_OF_MONTH)).show();
                     }
                 });
                 AlertDialog dialog = builder.create();
@@ -125,19 +167,38 @@ public class DeadlinesFragment extends Fragment {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 String key = dataSnapshot.getKey().toString();
+                tableLayout.removeAllViews();
                 Log.d("Dave", key);
+                deadlineList.add(dataSnapshot.getValue(Deadline.class));
                 list.add(key);
+                listValues.add(dataSnapshot.getValue().toString());
                 adapter.notifyDataSetChanged();
+                for (int i = 0; i < deadlineList.size(); i++){
+                    String deadlineName = deadlineList.get(i).deadlineName;
+                    String dueDate = deadlineList.get(i).deadlineDate;
+                    String dueTime = deadlineList.get(i).deadlineTime;
+                    TableRow tableRow = new TableRow(getActivity());
+                    tableRow.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+                    Button nameButton = new Button(getActivity());
+                    Button dueDateButton = new Button(getActivity());
+                    nameButton.setText(deadlineName);
+                    nameButton.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+                    dueDateButton.setText(deadlineList.get(i).deadlineDate);
+                    dueDateButton.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+                    tableRow.addView(nameButton);
+                    tableRow.addView(dueDateButton);
+                    tableLayout.addView(tableRow);
+                }
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 adapter.notifyDataSetChanged();
-
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
+                deadlineList.remove(dataSnapshot.getValue(Deadline.class));
                 list.remove(dataSnapshot.getKey().toString());
                 adapter.notifyDataSetChanged();
             }
@@ -152,7 +213,7 @@ public class DeadlinesFragment extends Fragment {
                 adapter.notifyDataSetChanged();
             }
         });
-        deadlinesListView.setClickable(true);
+        //deadlinesListView.setClickable(true);
         //Open notes fragment
         deadlinesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -183,15 +244,19 @@ public class DeadlinesFragment extends Fragment {
                     }
                 });
                 builder.show();
-                return false;
+                return true;
             }
         });
         return view;
     }
 
-    private void addNewDeadline(EditText input) {
-        String deadlineName = input.getText().toString();
-        dref.child(deadlineName).setValue("23/03/2018");
+    private void addNewDeadline(EditText name, Button date, Button time, EditText module) {
+        String deadlineName = name.getText().toString();
+        String deadlineDate = date.getText().toString();
+        String deadlineTime = time.getText().toString();
+        String deadlineModule = module.getText().toString();
+        Deadline deadline = new Deadline(deadlineName, deadlineModule, deadlineDate, deadlineTime);
+        dref.child(deadlineName).setValue(deadline);
     }
 
     //    // TODO: Rename method, update argument and hook method into UI event

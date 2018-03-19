@@ -10,18 +10,18 @@ public class Note {
     String module;
     String title;
     String noteContents;
-    Date noteCreated;
+    long timeStamp;
 
     public Note()
     {
     }
 
-    public Note(String m, String t, String note, Date f)
+    public Note(String m, String t, String note, long f)
     {
         module = m;
         title = t;
         noteContents = note;
-        noteCreated = f;
+        timeStamp = f;
     }
 }
 

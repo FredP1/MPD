@@ -169,7 +169,7 @@ public class ModuleFragment extends Fragment {
                     }
                 });
                 builder.show();
-                return false;
+                return true;
             }
         });
         //Add Floating action button action
@@ -177,17 +177,17 @@ public class ModuleFragment extends Fragment {
             @Override
             public void onClick(View view){
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setMessage("Enter the new modules name:")
-                        .setTitle("New Module");
-                final EditText input = new EditText(getActivity());
+                builder.setTitle("New Module");
+                final EditText moduleNameInput = new EditText(getActivity());
+                moduleNameInput.setHint("Please enter the module name");
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.MATCH_PARENT);
-                input.setLayoutParams(lp);
-                builder.setView(input);
+                moduleNameInput.setLayoutParams(lp);
+                builder.setView(moduleNameInput);
                 builder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        addNewModule(input);
+                        addNewModule(moduleNameInput);
                     }
                 });
                 AlertDialog dialog = builder.create();

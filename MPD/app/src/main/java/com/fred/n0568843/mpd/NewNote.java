@@ -19,6 +19,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -115,9 +116,8 @@ public class NewNote extends AppCompatActivity {
                     Toast.makeText(NewNote.this, "Note with that title already exists", Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    Date dateTime = new Date();
-                    Note note = new Note(chosenModule, noteTitle.getText().toString(), noteContents.getText().toString(), dateTime);
-                    //drefModule.child(noteTitle.getText().toString()).setValue(noteContents.getText().toString());
+                    Date date = new Date();
+                    Note note = new Note(chosenModule, noteTitle.getText().toString(), noteContents.getText().toString(), date.getTime());
                     drefModule.child(noteTitle.getText().toString()).setValue(note);
                     Intent myIntent = new Intent(NewNote.this, MainActivity.class);
                     NewNote.this.startActivity(myIntent);

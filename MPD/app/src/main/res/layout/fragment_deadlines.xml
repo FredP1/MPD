@@ -7,6 +7,20 @@
 
     <!-- TODO: Update blank fragment layout -->
 
+    <TableLayout
+        android:id="@+id/deadlinesTableLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:stretchColumns="*">
+
+        <TableRow
+            android:id="@+id/topRow"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+        </TableRow>
+    </TableLayout>
+
     <ListView
         android:id="@+id/deadlinesList"
         android:layout_width="match_parent"
@@ -18,4 +32,5 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_note_add" />
+
 </FrameLayout>
