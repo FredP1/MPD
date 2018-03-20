@@ -2,6 +2,7 @@ package com.fred.n0568843.mpd;
 
 import android.app.Activity;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.zip.Inflater;
 
 import static android.provider.Settings.System.DATE_FORMAT;
 
@@ -26,7 +28,7 @@ public class DeadlineList extends ArrayAdapter<Deadline> {
     private Handler handler = new Handler();
     private String DATE_FORMAT = "dd-MM-yyy HH:mm";
     View rowView;
-    TextView countdownTest;
+    String setTimerValue;
     public DeadlineList(Activity context,
                          ArrayList<Deadline> deadline) {
         super(context, R.layout.list_single, deadline);
@@ -39,14 +41,14 @@ public class DeadlineList extends ArrayAdapter<Deadline> {
         rowView= inflater.inflate(R.layout.deadline_list_layout, null, true);
         TextView deadlineTitle = (TextView) rowView.findViewById(R.id.deadlineTitle);
         TextView deadlineDateTime = (TextView) rowView.findViewById(R.id.deadlineDateTime);
-
+        TextView deadlineCountdown = rowView.findViewById(R.id.deadlineCountdown);
         ImageView imageView = (ImageView) rowView.findViewById(R.id.img);
         deadlineTitle.setText(deadline.get(position).deadlineName);
         deadlineDateTime.setText(deadline.get(position).deadlineDate + " at " + deadline.get(position).deadlineTime);
-        countdownStart(deadline.get(position).deadlineDate, deadline.get(position).deadlineTime);
+        countdownStart(deadline.get(position).deadlineDate, deadline.get(position).deadlineTime, rowView);
         return rowView;
     }
-    public void countdownStart(final String deadlineDate1, final String deadlineTime1)
+    public void countdownStart(final String deadlineDate1, final String deadlineTime1, final View rowView)
     {
         runnable = new Runnable() {
             @Override
@@ -61,10 +63,10 @@ public class DeadlineList extends ArrayAdapter<Deadline> {
                         long Days = diff / (24 * 60 * 60 * 1000);
                         long Hours = diff / (60 * 60 * 1000) % 24;
                         long Minutes = diff / (60 * 1000) % 60;
+                        long Seconds = diff / 1000 % 60;
                         //
-                        String setTimerValue = String.format("%02d", Days) + " Days " + String.format("%02d", Hours) + " Hours " + String.format("%02d", Minutes) + " Minutes";
-                        countdownTest = rowView.findViewById(R.id.deadlineCountdown);
-
+                        setTimerValue = String.format("%02d", Days) + " Days " + String.format("%02d", Hours) + " Hours " + String.format("%02d", Minutes) + " Minutes " + String.format("%02d", Seconds) + " Seconds.";
+                        final TextView countdownTest = rowView.findViewById(R.id.deadlineCountdown);
                         countdownTest.setText(setTimerValue);
                     } else {
                         handler.removeCallbacks(runnable);
