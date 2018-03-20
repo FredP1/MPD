@@ -55,9 +55,10 @@ public class ModuleFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
     DatabaseReference dref;
     ArrayList<String> list = new ArrayList<>();
-    ArrayAdapter<String> adapter;
+    //ArrayAdapter<String> adapter;
+    ListWithImage adapter;
     private FirebaseAuth mAuth;
-    int counter = 1;
+    int imageID = R.drawable.folder;
 
     public ModuleFragment() {
         // Required empty public constructor
@@ -101,7 +102,9 @@ public class ModuleFragment extends Fragment {
 
         FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
         ListView moduleListView = view.findViewById(R.id.moduleListView);
-        adapter=new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, list);
+
+        //adapter=new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, list);
+        adapter = new ListWithImage(getActivity(),list ,imageID);
         moduleListView.setAdapter(adapter);
         dref = FirebaseDatabase.getInstance().getReference("UserID/"+mAuth.getUid()+"/Modules");
         Log.d("Hello mate" , mAuth.getUid());

@@ -46,9 +46,10 @@ public class NotesFragment extends Fragment {
     private String mParam2;
     DatabaseReference dref;
     ArrayList<String> list = new ArrayList<>();
-    ArrayAdapter<String> adapter;
+    ListWithImage adapter;
     ArrayList<Note> noteList = new ArrayList<>();
     private FirebaseAuth mAuth;
+    int imageID = R.drawable.paper;
 
     private OnFragmentInteractionListener mListener;
 
@@ -102,7 +103,7 @@ public class NotesFragment extends Fragment {
         });
         mAuth = FirebaseAuth.getInstance();
         ListView notesListView = view.findViewById(R.id.notesListView);
-        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, list);
+        adapter = new ListWithImage(getActivity(), list, imageID);
         notesListView.setAdapter(adapter);
         dref = FirebaseDatabase.getInstance().getReference("UserID/" + mAuth.getUid() + "/Modules");
         Log.d("Hello mate", mAuth.getUid());
@@ -127,7 +128,6 @@ public class NotesFragment extends Fragment {
                 for (DataSnapshot uniqueNote : dataSnapshot.getChildren()) {
                     list.remove(uniqueNote.toString());
                     //this doesnt work, fix it
-                    long dave = uniqueNote.getChildrenCount();
                 }
                 String module = dataSnapshot.getKey();
                 if (dataSnapshot.getValue() == null)
@@ -175,6 +175,8 @@ public class NotesFragment extends Fragment {
                         if (which == 1) //Delete module
                         {
                             dref.child(noteList.get(i).module).child(list.get(i)).removeValue();
+                            list.remove(i);
+                            adapter.notifyDataSetChanged();
                         }
                     }
                 });

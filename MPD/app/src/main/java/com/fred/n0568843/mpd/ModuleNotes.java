@@ -23,9 +23,10 @@ public class ModuleNotes extends AppCompatActivity {
 
     DatabaseReference dref;
     ArrayList<String> list = new ArrayList<>();
-    ArrayAdapter<String> adapter;
+    ListWithImage adapter;
     private FirebaseAuth mAuth;
     ArrayList<Note> noteList = new ArrayList<>();
+    int imageID = R.drawable.paper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +49,7 @@ public class ModuleNotes extends AppCompatActivity {
         });
 
         ListView moduleListView = findViewById(R.id.moduleNotesListView);
-        adapter=new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, list);
+        adapter=new ListWithImage(this, list, imageID);
         moduleListView.setAdapter(adapter);
         dref = FirebaseDatabase.getInstance().getReference("UserID/"+mAuth.getUid()+"/Modules/"+ModuleName);
         dref.addChildEventListener(new ChildEventListener() {

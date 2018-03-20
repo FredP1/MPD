@@ -10,11 +10,11 @@
             android:title="Notes"/>
         <item
             android:id="@+id/nav_modules"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_action_folder"
             android:title="Modules" />
         <item
             android:id="@+id/nav_deadlines"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/ic_action_error"
             android:title="Deadlines" />
         <item
             android:id="@+id/nav_revision"

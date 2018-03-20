@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -22,6 +23,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,6 +37,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 
@@ -60,10 +64,13 @@ public class DeadlinesFragment extends Fragment {
     ArrayList<String> list = new ArrayList<>();
     ArrayList<String> listValues = new ArrayList<>();
     ArrayList<Deadline> deadlineList = new ArrayList<>();
-    ArrayAdapter<String> adapter;
+    //ArrayAdapter<String> adapter;
+    DeadlineList adapter;
     Calendar myCalendar;
+    private String DATE_FORMAT = "dd-MM-yyy HH:mm";
     private FirebaseAuth mAuth;
-    int counter = 0;
+    private Runnable runnable;
+    private Handler handler = new Handler();
 
     public DeadlinesFragment() {
         // Required empty public constructor
@@ -105,7 +112,7 @@ public class DeadlinesFragment extends Fragment {
         //Add Floating action button action
         FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
         //Table stuff
-        final TableLayout tableLayout = view.findViewById(R.id.deadlinesTableLayout);
+        //final TableLayout tableLayout = view.findViewById(R.id.deadlinesTableLayout);
         //Table stuff end
         myCalendar = Calendar.getInstance();
         fab.setOnClickListener(new View.OnClickListener(){
@@ -139,7 +146,7 @@ public class DeadlinesFragment extends Fragment {
                         myCalendar.set(Calendar.YEAR, year);
                         myCalendar.set(Calendar.MONTH, monthOfYear);
                         myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                        String myFormat = "dd-MM-yy";
+                        String myFormat = "dd-MM-yyyy";
                         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.UK);
                         deadlineDate.setText(sdf.format(myCalendar.getTime()));
 
@@ -152,6 +159,21 @@ public class DeadlinesFragment extends Fragment {
                                 myCalendar.get(Calendar.DAY_OF_MONTH)).show();
                     }
                 });
+                deadlineTime.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        int hour = myCalendar.get(Calendar.HOUR_OF_DAY);
+                        int minute = myCalendar.get(Calendar.MINUTE);
+                        TimePickerDialog mTimePicker;
+                        mTimePicker = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
+                            @Override
+                            public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                                deadlineTime.setText( selectedHour + ":" + selectedMinute);
+                            }
+                    }, hour, minute, true);
+                    mTimePicker.show();}
+                });
+
                 AlertDialog dialog = builder.create();
                 dialog.show();
                 //Toast.makeText(getActivity(), "Add Module Button", Toast.LENGTH_SHORT).show();
@@ -159,7 +181,8 @@ public class DeadlinesFragment extends Fragment {
         });
         mAuth = FirebaseAuth.getInstance();
         ListView deadlinesListView = (ListView) view.findViewById(R.id.deadlinesList);
-        adapter=new ArrayAdapter<String>(getActivity(),android.R.layout.simple_dropdown_item_1line, list);
+        //adapter=new ArrayAdapter<String>(getActivity(),android.R.layout.simple_dropdown_item_1line, list);
+        adapter = new DeadlineList(getActivity(),deadlineList);
         deadlinesListView.setAdapter(adapter);
         dref = FirebaseDatabase.getInstance().getReference("UserID/"+mAuth.getUid()+"/Deadlines");
         Log.d("Hello mate" , mAuth.getUid());
@@ -167,28 +190,9 @@ public class DeadlinesFragment extends Fragment {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 String key = dataSnapshot.getKey().toString();
-                tableLayout.removeAllViews();
                 Log.d("Dave", key);
                 deadlineList.add(dataSnapshot.getValue(Deadline.class));
-                list.add(key);
-                listValues.add(dataSnapshot.getValue().toString());
                 adapter.notifyDataSetChanged();
-                for (int i = 0; i < deadlineList.size(); i++){
-                    String deadlineName = deadlineList.get(i).deadlineName;
-                    String dueDate = deadlineList.get(i).deadlineDate;
-                    String dueTime = deadlineList.get(i).deadlineTime;
-                    TableRow tableRow = new TableRow(getActivity());
-                    tableRow.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
-                    Button nameButton = new Button(getActivity());
-                    Button dueDateButton = new Button(getActivity());
-                    nameButton.setText(deadlineName);
-                    nameButton.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
-                    dueDateButton.setText(deadlineList.get(i).deadlineDate);
-                    dueDateButton.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
-                    tableRow.addView(nameButton);
-                    tableRow.addView(dueDateButton);
-                    tableLayout.addView(tableRow);
-                }
             }
 
             @Override
@@ -199,7 +203,6 @@ public class DeadlinesFragment extends Fragment {
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 deadlineList.remove(dataSnapshot.getValue(Deadline.class));
-                list.remove(dataSnapshot.getKey().toString());
                 adapter.notifyDataSetChanged();
             }
 
@@ -218,28 +221,29 @@ public class DeadlinesFragment extends Fragment {
         deadlinesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Log.d("Dave", list.get(i));
+                //countdownStart(deadlineList.get(i).deadlineDate, deadlineList.get(i).deadlineTime);
             }
         });
         //Open options menu
         deadlinesListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, final int i, long l) {
-                CharSequence options[] = new CharSequence[] {"Edit "+list.get(i)+" Name", "Delete "+list.get(i)+" Deadline"};
+                CharSequence options[] = new CharSequence[] {"Edit "+deadlineList.get(i).deadlineName+" Name", "Delete "+deadlineList.get(i).deadlineName+" Deadline"};
 
                 final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("Choose an option");
                 builder.setItems(options, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        // the user clicked on colors[which]
                         if (which == 0) //Edit name
                         {
 
                         }
                         if (which == 1) //Delete Deadline
                         {
-                            dref.child(list.get(i)).removeValue();
+                            dref.child(deadlineList.get(i).deadlineName).removeValue();
+                            deadlineList.remove(i);
+                            adapter.notifyDataSetChanged();
                         }
                     }
                 });
