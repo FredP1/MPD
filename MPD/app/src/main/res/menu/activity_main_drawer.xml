@@ -9,6 +9,10 @@
             android:icon="@drawable/ic_note_add"
             android:title="Notes"/>
         <item
+            android:id="@+id/nav_pictures"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="Pictures"/>
+        <item
             android:id="@+id/nav_modules"
             android:icon="@drawable/ic_action_folder"
             android:title="Modules" />
