@@ -21,7 +21,7 @@ public class ImageViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_view);
         String imageName = getIntent().getStringExtra("imageName");
-        setTitle(imageName + " Image");
+        setTitle("Image: " + imageName);
         final ImageView imageView = findViewById(R.id.imageHolder);
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
