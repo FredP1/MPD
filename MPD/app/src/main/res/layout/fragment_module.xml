@@ -17,5 +17,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_action_new_folder" />
+        android:src="@drawable/ic_action_new_folder"
+        android:contentDescription="Add new module folder"/>
 </FrameLayout>

@@ -1,5 +1,6 @@
 package com.fred.n0568843.mpd;
 
+import android.content.ComponentName;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -112,9 +113,6 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
         if (id == R.id.action_sign_out) {
             LoginManager.getInstance().logOut();
             FirebaseAuth.getInstance().signOut();
@@ -147,10 +145,15 @@ public class MainActivity extends AppCompatActivity
             transaction.replace(R.id.fragment_container, deadlinesFragment);
             transaction.commit();
         } else if (id == R.id.nav_revision) {
-            Fragment revisionFragment = new RevisionFragment();
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.fragment_container, revisionFragment);
-            transaction.commit();
+            Intent i = new Intent();
+            ComponentName cn;
+            cn = new ComponentName("com.google.android.calendar", "com.android.calendar.LaunchActivity");
+            i.setComponent(cn);
+            startActivity(i);
+//            Fragment revisionFragment = new RevisionFragment();
+//            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//            transaction.replace(R.id.fragment_container, revisionFragment);
+//            transaction.commit();
         } else if (id == R.id.nav_notes) {
             Fragment notesFragment = new NotesFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();

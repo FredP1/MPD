@@ -2,6 +2,8 @@ package com.fred.n0568843.mpd;
 
 import android.app.Activity;
 import android.os.Handler;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,11 +47,12 @@ public class DeadlineList extends ArrayAdapter<Deadline> {
         ImageView imageView = (ImageView) rowView.findViewById(R.id.img);
         deadlineTitle.setText(deadline.get(position).deadlineName);
         deadlineDateTime.setText(deadline.get(position).deadlineDate + " at " + deadline.get(position).deadlineTime);
-        countdownStart(deadline.get(position).deadlineDate, deadline.get(position).deadlineTime, rowView);
+        countdownStart(deadline.get(position).deadlineDate, deadline.get(position).deadlineTime, rowView, deadline.get(position).deadlineName);
         return rowView;
     }
-    public void countdownStart(final String deadlineDate1, final String deadlineTime1, final View rowView)
+    public void countdownStart(final String deadlineDate1, final String deadlineTime1, final View rowView, final String deadlineTitle)
     {
+        boolean notificationSent = false;
         runnable = new Runnable() {
             @Override
             public void run() {
@@ -64,6 +67,17 @@ public class DeadlineList extends ArrayAdapter<Deadline> {
                         long Hours = diff / (60 * 60 * 1000) % 24;
                         long Minutes = diff / (60 * 1000) % 60;
                         long Seconds = diff / 1000 % 60;
+//                        if ((Days == 7) && (Hours == 0))
+//                        {
+//                            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getContext())
+//                                    .setSmallIcon(R.mipmap.ic_launcher_file)
+//                                    .setContentTitle(deadlineTitle)
+//                                    .setContentText(deadlineDate1 + " " + deadlineTime1)
+//                                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+//                            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getContext());
+//                            notificationManager.notify(1, mBuilder.build());
+//                            notificationSent = true;
+//                        }
                         //
                         setTimerValue = String.format("%02d", Days) + " Days " + String.format("%02d", Hours) + " Hours " + String.format("%02d", Minutes) + " Minutes " + String.format("%02d", Seconds) + " Seconds.";
                         final TextView countdownTest = rowView.findViewById(R.id.deadlineCountdown);

@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -224,6 +226,13 @@ public class DeadlinesFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //countdownStart(deadlineList.get(i).deadlineDate, deadlineList.get(i).deadlineTime);
+                NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getContext())
+                        .setSmallIcon(R.mipmap.ic_launcher_file)
+                        .setContentTitle(deadlineList.get(i).deadlineName)
+                        .setContentText(deadlineList.get(i).deadlineDate + " at " + deadlineList.get(i).deadlineTime)
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getActivity());
+                notificationManager.notify(1, mBuilder.build());
             }
         });
         //Open options menu

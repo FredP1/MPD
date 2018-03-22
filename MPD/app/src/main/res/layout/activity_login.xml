@@ -18,12 +18,14 @@
         android:layout_height="wrap_content"
         app:srcCompat="@mipmap/ic_launcher_file"
         android:paddingBottom="30dp"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_gravity="center_horizontal"
+        android:contentDescription="FNote icon"/>
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/google_sign_in_button"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:contentDescription="Google sign in button"/>
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/login_button"
@@ -31,6 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="30dp"
-        android:layout_marginTop="30dp" />
+        android:layout_marginTop="30dp"
+        android:contentDescription="Facebook sign in button"/>
 
 </LinearLayout>
