@@ -193,7 +193,7 @@ public class PictureFragment extends Fragment {
         pictureListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, final int i, long l) {
-                CharSequence options[] = new CharSequence[] {"Edit "+list.get(i)+" Name", "Delete "+list.get(i)+" Note"};
+                CharSequence options[] = new CharSequence[] {"Delete "+list.get(i)+" Picture"};
 
                 final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("Choose an option");
@@ -203,14 +203,11 @@ public class PictureFragment extends Fragment {
                         // the user clicked on colors[which]
                         if (which == 0) //Edit name
                         {
-
-                        }
-                        if (which == 1) //Delete module
-                        {
                             dref.child(list.get(i)).removeValue();
                             list.remove(i);
                             adapter.notifyDataSetChanged();
                         }
+
                     }
                 });
                 builder.show();

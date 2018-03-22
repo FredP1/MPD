@@ -160,7 +160,7 @@ public class NotesFragment extends Fragment {
         notesListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, final int i, long l) {
-                CharSequence options[] = new CharSequence[] {"Edit "+list.get(i)+" Name", "Delete "+list.get(i)+" Note"};
+                CharSequence options[] = new CharSequence[] {"Delete "+list.get(i)+" Note"};
 
                 final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("Choose an option");
@@ -169,10 +169,6 @@ public class NotesFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         // the user clicked on colors[which]
                         if (which == 0) //Edit name
-                        {
-
-                        }
-                        if (which == 1) //Delete module
                         {
                             dref.child(noteList.get(i).module).child(list.get(i)).removeValue();
                             list.remove(i);
