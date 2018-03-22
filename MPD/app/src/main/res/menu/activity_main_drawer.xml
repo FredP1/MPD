@@ -22,7 +22,7 @@
             android:title="Deadlines" />
         <item
             android:id="@+id/nav_revision"
-            android:icon="@drawable/ic_menu_slideshow"
+            android:icon="@drawable/ic_action_schedule"
             android:title="Revision Schedule" />
     </group>
 </menu>
